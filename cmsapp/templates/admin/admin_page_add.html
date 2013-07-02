@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+  	<title>{{site_name|safe}}</title>
+  	<meta charset="utf-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  	<meta name="description" content="{{site_name|safe}}" />
+  	<meta name="keywords" content="{{site_name|safe}}" />
+  	<meta name="author" content="Mike Fey" />
+  	<link rel="stylesheet" href="/static/css/admin/admin-style.css" type="text/css" media="screen" charset="utf-8" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery-te-1.3.3.css" type="text/css" media="screen" charset="utf-8" />
+</head>
+<body>
+  	<div id="wrapper">
+		<div id="main">
+			<div class="admin_header">
+		      	<h3><a href="/admin/main">{{site_name|safe}}</a></h3>
+		      	<div id="admin_user_buttons">
+			        <div id="logout_btn"><a href="/admin/logout">Logout</a></div>
+			        <div id="user_btn">Logged In as <a href="/admin/user/edit/{{session['user_id']}}">{{session['username']}}</a></div>
+		      	</div> 
+		      	<div id="admin_menu_block">
+			        <div id="manage_images_btn" class="ui_button ui_button_yellow"><a href="/admin/media">Manage Images</a></div>
+			        <div id="manage_pages_btn" class="ui_button ui_button_yellow admin_nav_btn_selected"><a href="/admin/pages">Manage Pages</a></div>
+			        <div id="manage_categories_btn" class="ui_button ui_button_yellow"><a href="/admin/categories">Manage Categories</a></div>
+			        {% if user_is_admin == 1 %}
+			        	<div id="manage_users_btn" class="ui_button ui_button_yellow"><a href="/admin/user/manage">Manage Users</a></div>
+			        {% endif %}
+			    </div>
+		    </div><!-- end admin_header -->
+		    <div id="admin_content">
+		      	<div class="admin_section_header">
+		        	<h1>Add a new Page</h1>
+		      	</div>
+		      	<div id="add_page_block">
+		        	<div class="messages">
+		          		{% with messages = get_flashed_messages(with_categories=true) %}
+		            		{% if messages %}
+		              			{% for category, message in messages %}
+		                			<div class="{{ category }}">{{ message }}</div>
+		              			{% endfor %}
+		            		{% endif %}
+		          		{% endwith %}
+		        	</div>
+		        	<div id="update_page_form">
+			          	<form name="input" action="/admin/page/addpage" method="post">
+			          		<div id="update_page_inputs">
+			          			{% if check_product == 'checked' %}
+		                  			<input type="checkbox" value="checked" name="is_product" checked="{{check_product}}">
+		               			 {% else %}
+		                  			<input type="checkbox" value="checked" name="is_product">
+		                		{% endif %}
+		                		<div class="login_title checkbox_title">Product</div>
+		                		<br/><br/>
+			          			<div class="login_title">Title:</div><br/>
+					            <input class="edit_input" name="title"/><br/><br/><br/>
+					            <div class="login_title">Slug (url): </div><br/>
+					            <input class="edit_input" name="slug" /><br/><br/><br/>
+					            <div class="login_title">Description:</div>
+					            <textarea class="edit_input" id="page_description_input" name="description"></textarea>
+			          		</div>
+				            <div id="update_page_buttons">
+				            	<input class="ui_button ui_button_submit" type="submit" value="Submit" />
+				            	<div class="ui_button ui_button_cancel"><a href="/admin/pages">Cancel</a></div>
+				            </div>
+				        </form>
+			        </div>
+		    	</div>
+			</div>
+	  	</div>
+  	</div>
+	<div id="admin_footer">
+	    <div id="admin_footer_content_wrapper">
+	      	<div id="admin_footer_content">
+	        	<div id="powered_by">Powered By
+					{% autoescape false %}
+						{{powered_by_link}}
+					{% endautoescape %}
+				</div>
+	      	</div>
+	    </div>
+	</div>  
+</body>
+<script data-main="/static/js/admin/app.js" src="/static/js/admin/libs/require.js"></script>
+</html>

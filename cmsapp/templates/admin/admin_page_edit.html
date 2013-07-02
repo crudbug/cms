@@ -1,0 +1,218 @@
+<html lang="en">
+<head>
+ 	<title>{{site_name|safe}}</title>
+  	<meta charset="utf-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  	<meta name="description" content="{{site_name|safe}}" />
+  	<meta name="keywords" content="{{site_name|safe}}" />
+  	<meta name="author" content="Mike Fey" />
+  	<link rel="stylesheet" href="/static/css/admin/admin-style.css" type="text/css" media="screen" charset="utf-8" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery.jscrollpane.css" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery.tagsinput.css" />
+  	<link rel="stylesheet" href="/static/css/admin/dropkick.css" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery-te-1.3.3.css" type="text/css" media="screen" charset="utf-8" />
+</head>
+<body>
+	<div id="wrapper">
+		<div id="main"> 
+			<div class="admin_header">
+	      		<h3><a href="/admin/main">{{site_name|safe}}</a></h3>
+	      		<div id="admin_user_buttons">
+	        		<div id="logout_btn"><a href="/admin/logout">Logout</a></div>
+	        		<div id="user_btn">Logged In as <a href="/admin/user/edit/{{session['user_id']}}">{{session['username']}}</a></div>
+	      		</div> 
+	      		<div id="admin_menu_block">
+	        		<div id="manage_images_btn" class="ui_button ui_button_yellow"><a href="/admin/media">Manage Images</a></div>
+	        		<div id="manage_pages_btn" class="ui_button ui_button_yellow admin_nav_btn_selected"><a href="/admin/pages">Manage Pages</a></div>
+	        		<div id="manage_categories_btn" class="ui_button ui_button_yellow"><a href="/admin/categories">Manage Categories</a></div>
+	        		{% if user_is_admin == 1%}
+			        	<div id="manage_users_btn" class="ui_button ui_button_yellow"><a href="/admin/user/manage">Manage Users</a></div>
+			        {% endif %}
+	      		</div>
+	    	</div> <!-- end admin_header -->
+	   		<div id="admin_content" class="edit_page_admin_content">
+	      		<div id="edit_page_container">
+	      			<div id="update_page_block">
+						<div class="admin_section_header">
+			        		<h1>Edit {{cur_page.title}}</h1>
+			    		</div>
+			    		<div class="messages">
+	            		{% with messages = get_flashed_messages(with_categories=true) %}
+	             			{% if messages %}
+	                			{% for category, message in messages %}
+	                  				<div class="{{ category }}">{{ message }}</div>
+	                			{% endfor %}
+	              			{% endif %}
+	            		{% endwith %}
+	          			</div>
+			    		<div class="tab_button_container">
+			    			<div id="edit_page_content_button" class="tab_button tab_button_selected"><span>Edit Content</span></div>
+			    			<div id="edit_page_media_button" class="tab_button"><span>Edit Images</span></div>
+			    			{% if check_product == 'checked' %}
+			    				<div id="edit_page_product_info_button" class="tab_button"><span>Edit Product Info</span></div>
+			    			{% else %}
+			    				<div id="edit_page_product_info_button" class="tab_button" style="display:none;"><span>Edit Product Info</span></div>
+			    			{% endif %}
+			    		</div>
+						
+	          		<div id="update_page_form">
+	          			<div id="page_image_block">
+			          		<div id="add_media_button" class="ui_button ui_button_add"><a href="#">Add Or Remove Images</a></div>
+			          		<div id="image_load_spinner"></div>
+			          		<div id="page_media_image_container">
+			            		<ul id="page_media_images"></ul>
+			          		</div>
+			        	</div>
+	            		<form name="input" action="/admin/page/update/{{cur_page.id}}" method="post">
+	            			<div id="update_page_inputs">
+								<input type="hidden" name="page_id" value="{{cur_page.id}}"/>
+		                		{% if check_product == 'checked' %}
+		                  			<input id="is_product_checkbox" type="checkbox" value="checked" name="is_product" checked="{{check_product}}">
+		               			{% else %}
+		                  			<input id="is_product_checkbox" type="checkbox" value="checked" name="is_product">
+		                		{% endif %}
+		                		<div class="login_title checkbox_title">Product</div>
+		                		<br/><br/>
+		              			<div class="login_title">Title:</div><br/>
+		              			<input class="edit_input" name="title" value="{{ cur_page.title }}" /><br/><br/><br/>
+		              			<div class="login_title">Slug (url): </div><br/>
+		              			{% if slug_string != '': %}
+		                			<div class="slug_string">{{slug_string }}</div>
+		              			{% endif %}
+		              			<input class="edit_input" name="slug" value="{{ cur_page.slug }}" /><br/><br/><br/>
+		              			<div class="login_title">Description:</div><br/><br/>
+		              			<div class="gal_form_sep"></div>
+		              			<textarea class="edit_input" id="page_description_input" name="description">{{ cur_page.description }}</textarea><br/><br/>
+		              			<div class="login_title custom_field_label">Custom Fields:</div>
+		              			<ul id="custom_fields">
+		              				{% for cfield in custom_fields: %}
+			              				<li class="custom_field_block">
+				            				<div class="custom_field_column">
+				              					<div class="custom_field_title">Title</div>
+				              					<input class="edit_input" name="custom_field_title" value="{{cfield.title}}" />	
+				              				</div>
+				              				<div class="custom_field_column_right">
+				              					<div class="custom_field_title">Value</div>
+				              					<input class="edit_input" name="custom_field_value" value="{{cfield.value}}" />	
+				              				</div>
+				              				<div class="custom_field_column_right">
+				              					<div class="custom_field_title">Value 2</div>
+				              					<input class="edit_input" name="custom_field_value_2" value="{{cfield.value2}}" />	
+				              				</div>
+				              				<input type="hidden" name="custom_field_id" value="{{cfield.id}}">
+				              				<input class="custom_field_delete_input" type="hidden" name="custom_field_delete" value="false">
+				              				<div class="custom_field_delete_btn">×</div>
+				            			</li>
+			            			{% endfor %}
+			            			{% if custom_field_amount == 0 %}
+			            				<li class="custom_field_block">
+				            				<div class="custom_field_column">
+				              					<div class="custom_field_title">Title</div>
+				              					<input class="edit_input" name="custom_field_title" value="" />	
+				              				</div>
+				              				<div class="custom_field_column_right">
+				              					<div class="custom_field_title">Value</div>
+				              					<input class="edit_input" name="custom_field_value" value="" />	
+				              				</div>
+				              				<div class="custom_field_column_right">
+				              					<div class="custom_field_title">Value 2</div>
+				              					<input class="edit_input" name="custom_field_value_2" value="" />	
+				              				</div>
+				              				<input type="hidden" name="custom_field_id" value="new">
+				              				<input class="custom_field_delete_input" type="hidden" name="custom_field_delete" value="false">
+				              				<div class="custom_field_delete_btn">×</div>
+				            			</li>
+			            			{% endif %}
+		               			</ul>
+		               			<div id="custom_field_add_btn" class="util_btn_container">
+		               				<div class="util_btn">Add Custom Field</div>
+		               			</div>
+		               			{% if category_count != 0 %}
+		               				<div class="login_title custom_field_label">Categories:</div>
+		               				<div id="category_check_boxes">
+			               				{% for cat in site_categories: %}
+			               					{% if cat['checked'] == 'checked' %}
+			                					<input type="checkbox" value="{{cat['model'].id}}" name="checked_category"checked="checked">
+			                					<div class="login_title checkbox_title checkbox_selected_title">{{cat['model'].name}}</div>
+			                				{% else %}
+			                					<input type="checkbox" value="{{cat['model'].id}}" name="checked_category">
+			                					<div class="login_title checkbox_title">{{cat['model'].name}}</div>
+			                				{% endif %}
+			               				{% endfor %}
+			               			</div>
+		               			{% endif %}
+	            			</div>
+							<div id="update_product_info_inputs">
+				        		<div class="login_title">Price:</div><br/>
+				              	<input class="edit_input" name="product_price" value="{{product_info_price}}" /><br/><br/><br/>
+				              	<div class="login_title">Weight:</div><br/>
+				              	<input class="edit_input" name="product_weight" value="{{product_info_weight}}" /><br/><br/><br/>
+				              	{% if check_out_of_stock == 'checked' %}
+		                  			<input id="is_out_of_stock_checkbox" type="checkbox" value="checked" name="is_out_of_stock" checked="{{check_out_of_stock}}">
+		               			{% else %}
+		                  			<input id="is_out_of_stock_checkbox" type="checkbox" value="checked" name="is_out_of_stock">
+		                		{% endif %}<div class="login_title checkbox_title checkbox_selected_title">Out of stock:</div><br/><br/><br/>
+		                		<div class="login_title">Quantity Available:</div><br/>
+				              	<input class="edit_input" name="product_quantity" value="{{product_quantity}}" /><br/><br/><br/>
+				        		<div class="login_title">Additional Notes:</div><br/><br/>
+				              	<div class="gal_form_sep"></div>
+				              	<textarea class="edit_input" id="product_notes_input" name="product_notes">{{product_info_notes}}</textarea><br/><br/>
+						    </div>
+						    <input type="hidden" id="current_tab_state_input" name="current_tab_state" value=""/>
+						    <input class="ui_button ui_button_submit" type="submit" value="Submit" />
+	              			<div class="ui_button ui_button_cancel"><a href="/admin/pages">Cancel</a></div>
+	              			<div class="ui_button ui_button_delete" id="delete_page_button" class="delete_page_button"><a href="/admin/page/delete/{{ cur_page.id }}" onclick="javascript:return confirm('Are you sure you want to delete this page? All of its sub pages will also be deleted.')">Delete Page</a></div>
+	            		</form>
+	          		</div>
+	        	</div>
+	        	<div id="choose_image_modal">
+	          		<h1>Select images for {{cur_page.title}}</h1>
+	          		<div id="media_sort_block">
+	            		<form id="search_block">
+	              			<input id="media_tag_search_input" class="search_input" name="search_term" />
+	            		</form>
+	            		<div id="sort_block">
+	            			<select id="sort_drop_down" name="image_sort" class="dk" tabindex="1">
+	                			<option value="date_created_asc">date created (desc)</option>
+	                			<option value="date_created_desc">date created (asc)</option>
+	                			<option value="date_updated_asc">date updated (desc)</option>
+	                			<option value="date_updated_desc">date updated (asc)</option>
+	                			<option value="caption_asc">caption (desc)</option>
+	                			<option value="caption_desc">caption (asc)</option>
+	                			<option value="filename_asc">file name (desc)</option>
+	                			<option value="filename_desc">file name (asc)</option>
+	              			</select>
+	            		</div>
+	        		</div>
+					<div class="admin_title_line"></div>
+	          		<div id="choose_page_images">
+	            	{% for am in all_media_array: %}
+	              		<div class="page_media_block" data-id="{{am['media'].id}}" data-created="{{am['media'].created}}" data-updated="{{am['media'].updated}}" data-caption="{{am.caption}}" data-filename="{{am['media'].filename}}" data-description="{{am['media'].description}}" data-sort-order="{{am['media'].sort_order}}" data-tags="{{am['media'].tags}}">
+	                		<div class="page_media_block_image_container">
+	                  			<img src="/static/uploads/{{am['thumb_path']}}" />
+	                		</div>
+	              		</div>
+	            	{% endfor %}
+	          		</div>
+	          		<div id="save_images_btn_wrapper">
+	          			<div id="save_images_btn" class="ui_button ui_button_green"><a href="#">Insert Selected Images / Remove Unselected Images</a></div>
+	          		</div>
+	        		</div>
+	   			</div>
+			</div>
+		</div>
+	</div>
+	<div id="admin_footer">
+    	<div id="admin_footer_content_wrapper">
+     		<div id="admin_footer_content">
+	        	<div id="powered_by">Powered By
+					{% autoescape false %}
+						{{powered_by_link}}
+					{% endautoescape %}
+				</div>
+      		</div>
+    	</div>
+	</div>  
+</body>
+<script data-main="/static/js/admin/app.js" src="/static/js/admin/libs/require.js"></script>
+</html>

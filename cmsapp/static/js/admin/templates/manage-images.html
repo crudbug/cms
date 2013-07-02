@@ -1,0 +1,14 @@
+{{#each images}}
+<li id="mb{{this.id}}" class="media_block" data-created="{{this.created}}" data-updated="{{this.updated}}" data-caption="{{this.caption}}" data-filename="{{this.filename}}" data-description="{{this.description}}'" data-sort-order="{{this.sort_order}}" data-tags="{{this.tags}}">
+	<a href="/admin/media/edit/{{this.id}}" style="width:{{this.thumb_width}}px;height:{{this.thumb_height}}px;">
+		<div class="media_block_image_container">
+			<img src="{{this.thumb_path}}" width="{{this.thumb_width}}" height="{{this.thumb_height}}"/>
+			<div class="media_block_cover"></div>
+			<div class="media_block_cover_icon">Edit</div>
+		</div>
+		<div class="page_image_order_num_container">
+			<div class="page_image_order_num">{{this.sort_order}}</div>
+		</div>
+	</a>
+</li>
+{{/each}}

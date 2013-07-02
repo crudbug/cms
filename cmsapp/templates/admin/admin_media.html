@@ -1,0 +1,134 @@
+<html lang="en">
+<head>
+  	<title>{{site_name|safe}}</title>
+  	<meta charset="utf-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  	<meta name="description" content="{{site_name|safe}}" />
+  	<meta name="keywords" content="{{site_name|safe}}" />
+  	<meta name="author" content="Mike Fey" />
+  	<link rel="stylesheet" href="/static/css/admin/admin-style.css" type="text/css" media="screen" charset="utf-8" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery-ui.css" id="theme">
+  	<link rel="stylesheet" href="/static/css/admin/jquery.fileupload-ui.css">
+  	<link rel="stylesheet" href="/static/css/admin/jquery.jscrollpane.css">
+  	<link rel="stylesheet" href="/static/css/admin/jquery.tagsinput.css">
+  	<link rel="stylesheet" href="/static/css/admin/dropkick.css">
+</head>
+<body>
+  	<div id="wrapper">
+		<div id="main"> 
+			<div class="admin_header">
+		      	<h3><a href="/admin/main">{{site_name|safe}}</a></h3>
+		      	<div id="admin_user_buttons">
+		        	<div id="logout_btn"><a href="/admin/logout">Logout</a></div>
+		        	<div id="user_btn">Logged In as <a href="/admin/user/edit/{{session['user_id']}}">{{session['username']}}</a></div>
+		      	</div> 
+		      	<div id="admin_menu_block">
+		        	<div id="manage_images_btn" class="ui_button ui_button_yellow admin_nav_btn_selected"><a href="/admin/media">Manage Images</a></div>
+		        	<div id="manage_pages_btn" class="ui_button ui_button_yellow"><a href="/admin/pages">Manage Pages</a></div>
+		        	<div id="manage_categories_btn" class="ui_button ui_button_yellow"><a href="/admin/categories">Manage Categories</a></div>
+		        	{% if user_is_admin == 1%}
+			          	<div id="manage_users_btn" class="ui_button ui_button_yellow"><a href="/admin/user/manage">Manage Users</a></div>
+			        {% endif %}
+		      	</div>
+		    </div> <!-- end admin_header -->
+		    <div id="admin_content">
+		     	{% if msg != '': %}
+		        	<div id="upload_flash">{{ msg }}</div>
+		      	{% endif %}
+					<div class="admin_section_header">
+			        	<h1>Images</h1><div id="media_count">({{media_count}} total)</div> 
+			        	<div id="upload_media_btn" class="ui_button ui_button_add"><a href="#">Add New Images</a></div>
+			        	<div class="util_btn_container sort_util_btn_container">
+	               			<div id="sort_toggle_btn" class="util_btn">Search / Sort Images</div>
+	               		</div>
+			    	</div>
+			    	<div id="admin_sort_wrapper">
+			       		<div id="media_sort_block">
+			          		<form id="search_block">
+			          			<div class="sort_block_label">Search images</div>
+			           			<input id="media_tag_search_input" class="search_input" name="search_term" />
+			          		</form>
+				          	<div id="sort_block">
+				          		<div class="sort_block_label">Sort images</div>
+				            	<select id="sort_drop_down" name="image_sort" class="dk" tabindex="1">
+				              		<option value="date_created_asc">date created (desc)</option>
+				              		<option value="date_created_desc">date created (asc)</option>
+				              		<option value="date_updated_asc">date updated (desc)</option>
+				              		<option value="date_updated_desc">date updated (asc)</option>
+				              		<option value="caption_asc">caption (desc)</option>
+				              		<option value="caption_desc">caption (asc)</option>
+				              		<option value="filename_asc">file name (desc)</option>
+				              		<option value="filename_desc">file name (asc)</option>
+				            	</select>
+				          	</div>
+				          	 <div id="media_tag_container">
+					          	<div id="media_tag_title">Sort by tags</div>
+					          	<div id="media_tag_inner">
+					        	</div>
+					        </div>
+				        </div>
+			    	</div>
+			    	<div id="image_bank_container">
+				        <ul id="image_block_container" class="{{media_sortable_class}}">
+				          <!-- media goes here -->
+				        </ul>
+				        <div id="image_load_spinner"></div>
+				    </div>
+			    <div id="fileupload">
+			        <h1>Add Images</h1>
+			        <div class="admin_title_line"></div>
+			        <form id="media_upload_btns" action="/admin/media/upload" method="POST" enctype="multipart/form-data">
+			            <div class="fileupload-buttonbar">
+			                <label class="cms_theme fileinput-button">
+			                    <span>Add files</span>
+			                    <input type="file" name="files[]" multiple>
+			                </label>
+			                <button type="submit" class="cms_theme start">Start upload</button>
+			                <button type="reset" class="cms_theme cancel">Cancel upload</button>
+			            </div>
+			        </form>
+			        <div class="cms_theme fileupload-content">
+			            <table class="files"></table>
+			            <div class="fileupload-progressbar"></div>
+			        </div>
+			    </div>
+			    <script id="template-upload" type="text/x-jquery-tmpl">
+			        {% raw %}
+			        <tr class="template-upload{{if error}} ui-state-error{{/if}}">
+			            <td class="preview"></td>
+			            <td class="name">${name}</td>
+			            <td class="size">${sizef}</td>
+			            {{if error}}
+			                <td class="error" colspan="2">Error:
+			                    {{if error === 'maxFileSize'}}File is too big
+			                    {{else error === 'minFileSize'}}File is too small
+			                    {{else error === 'acceptFileTypes'}}Filetype not allowed
+			                    {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+			                    {{else}}${error}
+			                    {{/if}}
+			                </td>
+			            {{else}}
+			                <td class="progress"><div></div></td>
+			                <td class="start"><button>Start</button></td>
+			            {{/if}}
+			            <td class="cancel"><button>×</button></td>
+			        </tr>
+			        {% endraw %}
+			    </script>
+		    </div>
+		</div>
+	</div>
+	<div id="admin_footer">
+	    <div id="admin_footer_content_wrapper">
+	      	<div id="admin_footer_content">
+	        	<div id="powered_by">Powered By
+					{% autoescape false %}
+						{{powered_by_link}}
+					{% endautoescape %}
+				</div>
+	      	</div>
+	    </div>
+  	</div>  
+</body>
+<script data-main="/static/js/admin/app.js" src="/static/js/admin/libs/require.js"></script>
+</html>

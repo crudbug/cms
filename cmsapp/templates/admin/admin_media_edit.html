@@ -1,0 +1,172 @@
+<html lang="en">
+<head>
+  	<title>{{site_name|safe}}</title>
+  	<meta charset="utf-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  	<meta name="description" content="{{site_name|safe}}" />
+  	<meta name="keywords" content="{{site_name|safe}}" />
+  	<meta name="author" content="Mike Fey" />
+  	<link rel="stylesheet" href="/static/css/admin/admin-style.css" type="text/css" media="screen" charset="utf-8" />
+  	<link rel="stylesheet" href="/static/css/admin/jquery-ui.css" id="theme">
+  	<link rel="stylesheet" href="/static/css/admin/jquery.fileupload-ui.css">
+  	<link rel="stylesheet" href="/static/css/admin/jquery.jscrollpane.css">
+	<link rel="stylesheet" href="/static/css/admin/style.jrac.css">
+</head>
+<body>
+	<div id="wrapper">
+		<div id="main">
+			<div class="admin_header">
+		        <h3><a href="/admin/main">{{site_name|safe}}</a></h3>
+		        <div id="admin_user_buttons">
+		          	<div id="logout_btn"><a href="/admin/logout">Logout</a></div>
+		          	<div id="user_btn">Logged In as <a href="/admin/user/edit/{{session['user_id']}}">{{session['username']}}</a></div>
+		        </div> 
+		        <div id="admin_menu_block">
+			        <div id="manage_images_btn" class="ui_button ui_button_yellow admin_nav_btn_selected"><a href="/admin/media">Manage Images</a></div>
+			        <div id="manage_pages_btn" class="ui_button ui_button_yellow"><a href="/admin/pages">Manage Pages</a></div>
+			        <div id="manage_categories_btn" class="ui_button ui_button_yellow"><a href="/admin/categories">Manage Categories</a></div>
+			        {% if user_is_admin == 1 %}
+			        	<div id="manage_users_btn" class="ui_button ui_button_yellow"><a href="/admin/user/manage">Manage Users</a></div>
+			        {% endif %}
+				</div>
+		    </div> <!-- end admin_header -->
+	      	<div id="admin_content" class="media_edit_content">
+		        <div class="admin_section_header">
+		          <h1>Edit: {{cur_image.filename}}</h1>
+		        </div>
+		        <div class="edit_image_messages">
+			        {% with messages = get_flashed_messages(with_categories=true) %}
+			          	{% if messages %}
+			            	{% for category, message in messages %}
+			              		<div class="{{category}}">{{message}}</div>
+			            	{% endfor %}
+			          	{% endif %}
+			        {% endwith %}
+			    </div>
+		        <div class="tab_button_container">
+	    			<div id="edit_image_button" class="tab_button tab_button_selected"><span>Edit Image</span></div>
+	    			<div id="edit_image_info_button" class="tab_button"><span>Edit Image Info</span></div>
+	    		</div>
+	    		<div class="update_edit_btn_container update_edit_btn_container_first">
+	            	{% if in_page %}
+	            		<div class="util_btn" id="prev_edit_image_btn"><a href="/admin/media/edit/{{prev_image.id}}/page/{{page_id}}">Prev Image</a></div>
+					{% else %}
+						<div class="util_btn" id="prev_edit_image_btn"><a href="/admin/media/edit/{{prev_image.id}}">Prev Image</a></div>
+					{% endif %}
+					{% if in_page %}
+						<div class="util_btn" id="next_edit_image_btn"><a href="/admin/media/edit/{{next_image.id}}/page/{{page_id}}">Next Image</a></div>
+					{% else %}
+						<div class="util_btn" id="next_edit_image_btn"><a href="/admin/media/edit/{{next_image.id}}">Next Image</a></div>
+					{% endif %}
+				</div>
+				<div id="image_edit_wrapper">
+					<div id="image_edit_container">
+			          	<div id="editing_image_container">
+			            	<a href="/static/uploads/{{cur_image.filename}}" target="_blank"><img src="/static/uploads/{{cur_image.filename}}" width="{{cur_image.file_width}}" height="{{cur_image.file_height}}" /></a>
+			          	</div>
+						<div id="editing_image_load_spinner"></div>
+	       			</div>
+	       			<div class="update_edit_btn_container">	
+						<div class="util_btn" id="update_edit_image_btn"><a class="update_edit_image_btn_a" href="#">Change Image</a></div>
+						{% if editable_thumbnails %}
+	    					<div class="util_btn" id="custom_thumb_edit_image_btn"><a class="update_edit_image_btn_a" href="#">Edit Thumbnail</a></div>
+	    				{% endif %}
+	    				<div class="ui_button ui_button_delete" id="delete_edit_image_btn"><a href="/admin/media/delete/{{cur_image.id}}" onclick="javascript:return confirm('Are you sure you want to delete this image?')">Delete Image</a></div>
+		         	</div>
+				</div>
+		        <div id="image_edit_info_container">
+		          	<div class="login_title editing_image_info">Created: <span style="font-weight:normal;">{{cur_image.created.strftime('%m/%d/%Y %I:%M:%S %p')}}</span></div>
+		          	<div class="login_title editing_image_info">Last Updated: <span style="font-weight:normal;">{{cur_image.updated.strftime('%m/%d/%Y %I:%M:%S %p')}}</span></div>
+		          	<div class="login_title editing_image_info">Image Width: <span style="font-weight:normal;">{{cur_image.file_width}}px</span></div>
+		          	<div class="login_title editing_image_info">Image Height: <span style="font-weight:normal;">{{cur_image.file_height}}px</span></div>
+		          	<form id="media_edit_form" name="input" action="/admin/media/update/{{cur_image.id}}" method="post">
+			            <input type="hidden" name="media_id" value="{{cur_image.id}}"/>
+			            <div class="login_title">Caption:</div>
+			            <textarea class="edit_input" name="caption">{{cur_image.caption}}</textarea>
+			            <div class="login_title">Description:</div>
+			            <textarea class="edit_input" name="description">{{cur_image.description}}</textarea>
+			            <div class="login_title">Video Embed Code:</div>
+			            <textarea class="edit_input" name="video_embed">{{cur_image.video_embed_code}}</textarea>
+			            <div class="login_title">Tags (Separated By Commas):</div>
+			            <textarea class="edit_input" name="tags">{{cur_image.tags}}</textarea>
+			            <input class="ui_button ui_button_submit" type="submit" value="Update Info" />
+			            <div class="ui_button ui_button_cancel"><a href="/admin/media">Cancel</a></div>
+		          	</form>
+		        </div>
+				<div id="custom_thumbnail">
+          			<h1>Edit thumbnail</h1>
+          			<div class="admin_title_line"></div>
+					<div id="custom_thumbnail_preview_image">
+						<div id="custom_thumbnail_preview_image_inner">
+						</div>
+					</div>
+					<table id="custom_thumbnail_info">
+						<tr><td><strong>crop x</strong></td><td><input id="thumb_image_crop_x" type="text" /></td></tr>
+		        		<tr><td><strong>crop y</strong></td><td><input id="thumb_image_crop_y" type="text" /></td></tr>
+		        		<tr><td><strong>image width</strong></td><td><input id="thumb_image_width" type="text" /></td></tr>
+		        		<tr><td><strong>image height</strong></td><td><input id="thumb_image_height" /></td></tr>
+		        		<tr><td><strong>lock proportion</strong></td><td><input type="checkbox" checked="checked" /></td></tr>
+					</table>
+					<div class="uu_success">Thumbnail successfully created.</div>
+					<div id="custom_thumbnail_btn" class="ui_button ui_button_green">
+						<a href="#" style="border: none; cursor: pointer;">Create thumbnail</a>
+					</div>
+      			</div>
+    			<div id="fileupload">
+	          		<h1>Choose A New Image</h1>
+	          		<div class="admin_title_line"></div>
+	          		<form id="media_upload_btns" action="/admin/media/upload?u=1&id={{cur_image.id}}" method="POST" enctype="multipart/form-data">
+			            <div class="fileupload-buttonbar">
+			                <label class="cms_theme fileinput-button">
+			                    <span>Add files</span>
+			                    <input type="file" name="files[]" multiple>
+			                </label>
+			                <button type="submit" class="cms_theme start">Start upload</button>
+			                <button type="reset" class="cms_theme cancel">Cancel upload</button>
+			            </div>
+			        </form>
+			        <div class="cms_theme fileupload-content">
+			            <table class="files"></table>
+			            <div class="fileupload-progressbar"></div>
+			        </div>
+			    </div>
+			    <script id="template-upload" type="text/x-jquery-tmpl">
+			        {% raw %}
+			        <tr class="template-upload{{if error}} ui-state-error{{/if}}">
+			            <td class="preview"></td>
+			            <td class="name">${name}</td>
+			            <td class="size">${sizef}</td>
+			            {{if error}}
+			                <td class="error" colspan="2">Error:
+			                    {{if error === 'maxFileSize'}}File is too big
+			                    {{else error === 'minFileSize'}}File is too small
+			                    {{else error === 'acceptFileTypes'}}Filetype not allowed
+			                    {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+			                    {{else}}${error}
+			                    {{/if}}
+			                </td>
+			            {{else}}
+			                <td class="progress"><div></div></td>
+			                <td class="start"><button>Start</button></td>
+			            {{/if}}
+			            <td class="cancel"><button>×</button></td>
+			        </tr>
+			        {% endraw %}
+			    </script>
+			</div>
+		</div>
+	</div>
+	<div id="admin_footer">
+		<div id="admin_footer_content_wrapper">
+			<div id="admin_footer_content">
+				<div id="powered_by">Powered By
+					{% autoescape false %}
+						{{powered_by_link}}
+					{% endautoescape %}
+				</div>
+			</div>
+		</div>
+	</div>  
+</body>
+<script data-main="/static/js/admin/app.js" src="/static/js/admin/libs/require.js"></script>
+</html>

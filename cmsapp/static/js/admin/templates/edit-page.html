@@ -1,0 +1,14 @@
+{{#each images}}
+<li id="igmb_{{this.id}}" class="in_page_media_block" data-created="{{this.created}}" data-updated="{{this.updated}}" data-id="{{this.id}}" data-caption="{{this.caption}}" data-filename="{{this.filename}}" data-description="{{this.description}}" data-tags="{{this.tags}}">
+	<div class="in_page_media_image_content_holder">
+		<a href="/admin/media/edit/{{this.id}}/page/{{this.page_id}}"> 
+			<div class="in_page_media_block_image_container">
+				<img width="{{this.thumb_width}}" height="{{this.thumb_height}}" src="/static/uploads/{{this.thumb_path}}" />
+			</div>
+		</a>
+	</div>
+	<div class="page_image_order_num_container">
+		<div class="page_image_order_num">{{this.sort_order}}</div>
+	</div>
+</li>
+{{/each}}

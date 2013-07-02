@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class='ie6'> <![endif]-->
+<!--[if IE 7 ]>    <html class='ie7'> <![endif]-->
+<!--[if IE 8 ]>    <html class='ie8'> <![endif]-->
+<!--[if IE 9 ]>
+	<style type="text/css">
+    	.gradient {
+       		filter: none;
+    	}
+  	</style>
+  	<html class='ie9'> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang='en'> <!--<![endif]-->
+<head>
+  	<title>{{site_name}}</title>
+  	<meta charset="utf-8" />
+	<meta name="description" content="{{site_description}}" />
+  	<meta name="keywords" content="{{site_keywords}}" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  	<link rel="stylesheet" href="/static/css/{{site_css}}" type="text/css" media="screen" charset="utf-8" />
+	<link rel="shortcut icon" href="/static/images/frontend/favicon.ico" />
+</head>
+<body>
+  	<div id='site-content'>
+  		<ul id='categories'>
+  			{% for cat in all_categories: %}
+  				<li>
+  					<div class='category-name'>{{cat.name}}</div>
+					<div class='category-slug'>{{cat.slug}}</div>
+  				</li>
+  			{% endfor%}
+  		</ul>
+	  	<ul id='pages'>
+			{% for ap in content_object: %}
+	        <li>
+				<a href="{{ap['page'].slug}}">{{ap['page'].title}}</a>
+					<div class='page-content'>{{ap['page'].description}}</div>
+					<div class='page-id'>{{ap['page'].id}}</div>
+					<div class='page-sort-order'>{{ap['page'].sort_order}}</div>
+					<div class='page-parent-id'>{{ap['page'].parent_id}}</div>
+					<div class='page-created'>{{ap['page'].created}}</div>
+					<div class='page-is-product'>{{ap['page'].is_product}}</div>
+					<div class='page-product-price'>{{ap['product_info'].price}}</div>
+					<div class='page-product-weight'>{{ap['product_info'].weight}}</div>
+					<div class='page-product-quantity'>{{ap['product_info'].quantity}}</div>
+					<div class='page-product-out-of-stock'>{{ap['product_info'].out_of_stock}}</div>
+					<div class='page-product-notes'>{{ap['product_info'].notes}}</div>
+					{% if ap['has_media_array']: %}
+						<div class='media'>
+							{% for m in ap['media_array']: %}
+								<div class='media-item'>
+									<a href='/static/uploads/{{m["media"].filename}}'>
+										<div class='image-thumbnail-url'>/static/uploads/{{m['thumb']}}</div>
+										<div class='image-medium-url'>/static/uploads/{{m['medium']}}</div>
+										<div class='image-id'>{{m['media'].id}}</div>
+										<div class='image-sort-order'>{{m['sort_order']}}</div>
+										<div class='image-width'>{{m['media'].file_width}}</div>
+										<div class='image-height'>{{m['media'].file_height}}</div>
+										<div class='image-caption'>{{m['media'].caption}}</div>
+										<div class='image-description'>{{m['media'].description}}</div>
+										<div class='image-video'>{{m['media'].video_embed_code}}</div>
+										<div class='image-tags'>{{m['media'].tags}}</div>
+									</a>
+								</div>
+							{% endfor %} 
+						</div>
+					{% endif %}
+					{% if ap['has_custom_fields']: %}
+						<div class='custom-fields'>
+							{% for cf in ap['custom_fields']: %}
+								<div class='custom-field-item'>
+									<div class='custom-field-title'>{{cf.title}}</div>
+									<div class='custom-field-value'>{{cf.value}}</div>
+									<div class='custom-field-value-2'>{{cf.value2}}</div>
+								</div>
+							{% endfor %} 
+						</div>
+					{% endif %} 
+					{% if ap['has_category_array']: %}
+						<div class='categories'>
+							{% for c in ap['category_array']: %}
+								<div class='category-item'>
+									<div class='category-name'>{{c.name}}</div>
+									<div class='category-slug'>{{c.slug}}</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% endif %} 
+					{% if ap['has_child_page_array']: %}
+						<ul class='child-pages'>
+							{% for ca in ap['child_page_array']: %}
+						 		<li>
+									<a href="{{ap['page'].slug}}/{{ca['page'].slug}}">{{ca['page'].title}}</a> 
+									<div class='page-content'>{{ca['page'].description}}</div>
+									<div class='page-id'>{{ca['page'].id}}</div>
+									<div class='page-sort-order'>{{ca['page'].sort_order}}</div>
+									<div class='page-parent-id'>{{ca['page'].parent_id}}</div>
+									<div class='page-created'>{{ca['page'].created}}</div>
+									<div class='page-is-product'>{{ca['page'].is_product}}</div>
+									<div class='page-product-price'>{{ca['product_info'].price}}</div>
+									<div class='page-product-weight'>{{ca['product_info'].weight}}</div>
+									<div class='page-product-quantity'>{{ca['product_info'].quantity}}</div>
+									<div class='page-product-out-of-stock'>{{ca['product_info'].out_of_stock}}</div>
+									<div class='page-product-notes'>{{ca['product_info'].notes}}</div>
+									{% if ca['has_media_array']: %}
+										<div class='media'>
+											{% for cm in ca['media_array']: %} 
+												<div class='media-item'>
+													<a href='/static/uploads/{{cm["media"].filename}}'>
+														<div class='image-thumbnail-url'>/static/uploads/{{cm['thumb']}}</div>
+														<div class='image-medium-url'>/static/uploads/{{cm['medium']}}</div>
+														<div class='image-id'>{{cm['media'].id}}</div>
+														<div class='image-sort-order'>{{cm['sort_order']}}</div>
+														<div class='image-width'>{{cm['media'].file_width}}</div>
+														<div class='image-height'>{{cm['media'].file_height}}</div>
+														<div class='image-caption'>{{cm['media'].caption}}</div>
+														<div class='image-description'>{{cm['media'].description}}</div>
+														<div class='image-video'>{{cm['media'].video_embed_code}}</div>
+														<div class='image-tags'>{{cm['media'].tags}}</div>
+													</a>
+												</div>
+											{% endfor %} 
+										</div>
+									{% endif %}
+									{% if ca['has_custom_fields']: %}
+										<div class='custom-fields'>
+											{% for cf in ca['custom_fields']: %}
+												<div class='custom-field-item'>
+													<div class='custom-field-title'>{{cf.title}}</div>
+													<div class='custom-field-value'>{{cf.value}}</div>
+													<div class='custom-field-value-2'>{{cf.value2}}</div>
+												</div>
+											{% endfor %} 
+										</div>
+									{% endif %}
+									{% if ca['has_category_array']: %}
+										<div class='categories'>
+											{% for c in ca['category_array']: %}
+												<div class='category-item'>
+													<div class='category-name'>{{c.name}}</div>
+													<div class='category-slug'>{{c.slug}}</div>
+												</div>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</li>
+							{% endfor %} 
+						</ul>
+					{% endif %}
+				</li>
+	      	{% endfor %}
+		</ul>
+  	</div>
+</body>
+</html>

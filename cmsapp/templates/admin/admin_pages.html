@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+  <title>{{site_name|safe}}</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="{{site_name|safe}}" />
+  <meta name="keywords" content="{{site_name|safe}}" />
+  <meta name="author" content="Mike Fey" />
+  <link rel="stylesheet" href="/static/css/admin/admin-style.css" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="/static/css/admin/jquery-ui.css" id="theme">
+  <link rel="stylesheet" href="/static/css/admin/jquery.fileupload-ui.css">
+  <link rel="stylesheet" href="/static/css/admin/jquery.jscrollpane.css">
+  <link rel="stylesheet" href="/static/css/admin/jquery.tagsinput.css">
+</head>
+<body>
+  <div id="wrapper">
+		<div id="main">
+			<div class="admin_header">
+	      <h3><a href="/admin/main">{{site_name|safe}}</a></h3>
+	      <div id="admin_user_buttons">
+	        <div id="logout_btn"><a href="/admin/logout">Logout</a></div>
+	        <div id="user_btn">Logged In as <a href="/admin/user/edit/{{session['user_id']}}">{{session['username']}}</a></div>
+	      </div> 
+	      <div id="admin_menu_block">
+	        <div id="manage_images_btn" class="ui_button ui_button_yellow"><a href="/admin/media">Manage Images</a></div>
+	        <div id="manage_pages_btn" class="ui_button ui_button_yellow admin_nav_btn_selected"><a href="/admin/pages">Manage Pages</a></div>
+	        <div id="manage_categories_btn" class="ui_button ui_button_yellow"><a href="/admin/categories">Manage Categories</a></div>
+	        {% if user_is_admin == 1%}
+	        	<div id="manage_users_btn" class="ui_button ui_button_yellow"><a href="/admin/user/manage">Manage Users</a></div>
+	        {% endif %}
+	      </div>
+	    </div> <!-- end admin_header -->
+	    <div id="admin_content">
+	      <div class="admin_section_header">
+	        <h1>Pages</h1>
+					<div id="new_page_btn" class="ui_button ui_button_add"><a href="/admin/page/add">Add new page</a></div>
+	      </div>
+	      <div id="page_container">
+	        <div id="page_block_container">
+	          {% autoescape false %}
+	            {{page_html}}
+	          {% endautoescape %}
+	        </div>
+	      </div>
+	    </div>
+		</div>
+  </div>
+  <div id="admin_footer">
+    <div id="admin_footer_content_wrapper">
+      <div id="admin_footer_content">
+        <div id="powered_by">Powered By
+					{% autoescape false %}
+						{{powered_by_link}}
+					{% endautoescape %}
+				</div>
+      </div>
+    </div>
+  </div>
+</body>
+<script data-main="/static/js/admin/app.js" src="/static/js/admin/libs/require.js"></script>
+</html>
